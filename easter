@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+import sys
+
+
+def month_days(month):
+    if month == 3:
+        return 31
+    elif month == 4:
+        return 30
+
+
+def julian_difference(year):
+    return year // 100 - year // 400 - 2
+
+
+def get_easter_date(year, type):
+    a = year % 19
+    b = year % 4
+    c = year % 7
+    if type in ("julian", "orthodox"):
+        M = 15
+        N = 6
+    elif type == "gregorian":
+        k = year // 100
+        p = (13 + 8 * k) // 25
+        q = k // 4
+        M = (15 - p + k - q) % 30
+        N = (4 + k - q) % 7
+    d = (19 * a + M) % 30
+    e = (2 * b + 4 * c + 6 * d + N) % 7
+    if d == 29 and e == 6:
+        month = 4
+        day_of_month = 19
+    elif d == 28 and e == 6 and (11 * M + 11) % 30 < 19:
+        month = 4
+        day_of_month = 18
+    else:
+        month = 3
+        day_of_month = 22 + d + e
+    if day_of_month > 31:
+        month = 4
+        day_of_month -= 31
+    if type == "orthodox":
+        day_of_month += julian_difference(year)
+        if day_of_month > month_days(month):
+            day_of_month -= month_days(month)
+            month += 1
+    return month, day_of_month
+
+
+try:
+    year = int(sys.argv[1])
+    if year < 1:
+        raise ValueError()
+except (IndexError, ValueError):
+    sys.stderr.write("Please specify a valid year")
+    sys.exit(1)
+gm, gd = get_easter_date(year, "gregorian")
+jm, jd = get_easter_date(year, "julian")
+om, od = get_easter_date(year, "orthodox")
+print(
+    f"gregorian={year:04}-0{gm}-{gd:02} "
+    f"julian={year:04}-0{jm}-{jd:02} "
+    f"orthodox={year:04}-0{om}-{od:02}"
+)
