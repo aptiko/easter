@@ -1,0 +1,16 @@
+<h1>Date of Easter</h1>
+<form>
+    <p>Year: <input id="year" type="number" maxlength="4" size="4"></p>
+    <input id="submit" type="submit">
+</form>
+<p id='result'></p>
+<script type="text/javascript" src="./easter.js"></script>
+<script type="text/javascript">
+    function update(event) {
+        event.preventDefault();
+        const year = document.querySelector('#year').value;
+        document.querySelector('#result').textContent = getAllEasterDates(year);
+    }
+
+    document.querySelector('#submit').onclick = update;
+</script>
