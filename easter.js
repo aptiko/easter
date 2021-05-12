@@ -8,29 +8,18 @@ function monthDays(month) {
   throw Error("Something's wrong");
 }
 
-function julianDifference(year) {
-  return Math.floor(year / 100) - Math.floor(year / 400) - 2;
-}
-
-function getEasterDate(year, type) {
+function getEasterDate(year) {
   let month;
   let dayOfMonth;
-  let M;
-  let N;
 
   const a = year % 19;
   const b = year % 4;
   const c = year % 7;
-  if (['julian', 'orthodox'].includes(type)) {
-    M = 15;
-    N = 6;
-  } else {
-    const k = Math.floor(year / 100);
-    const p = Math.floor((13 + 8 * k) / 25);
-    const q = Math.floor(k / 4);
-    M = (15 - p + k - q) % 30;
-    N = (4 + k - q) % 7;
-  }
+  const k = Math.floor(year / 100);
+  const p = Math.floor((13 + 8 * k) / 25);
+  const q = Math.floor(k / 4);
+  const M = (15 - p + k - q) % 30;
+  const N = (4 + k - q) % 7;
   const d = (19 * a + M) % 30;
   const e = (2 * b + 4 * c + 6 * d + N) % 7;
   if (d === 29 && e === 6) {
@@ -42,17 +31,10 @@ function getEasterDate(year, type) {
   } else {
     month = 3;
     dayOfMonth = 22 + d + e;
-  }
-  if (dayOfMonth > 31) {
-    month = 4;
-    dayOfMonth -= 31;
-  }
-  if (type === 'orthodox') {
-    dayOfMonth += julianDifference(year);
-  }
-  if (dayOfMonth > monthDays(month)) {
-    dayOfMonth -= monthDays(month);
-    month += 1;
+    if (dayOfMonth > 31) {
+      month = 4;
+      dayOfMonth -= 31;
+    }
   }
   return [month, dayOfMonth];
 }
@@ -66,7 +48,5 @@ function formatDate(year, month, day) {
 
 function getAllEasterDates(year) {
   const [gm, gd] = getEasterDate(year, 'gregorian');
-  const [jm, jd] = getEasterDate(year, 'julian');
-  const [om, od] = getEasterDate(year, 'orthodox');
-  return `gregorian=${formatDate(year, gm, gd)} julian=${formatDate(year, jm, jd)} orthodox=${formatDate(year, om, od)}`;
+  return `gregorian easter=${formatDate(year, gm, gd)}`;
 }
