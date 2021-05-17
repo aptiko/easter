@@ -50,3 +50,5 @@ function getAllEasterDates(year) {
   const [gm, gd] = getEasterDate(year, 'gregorian');
   return `gregorian easter=${formatDate(year, gm, gd)}`;
 }
+
+export { getEasterDate, getAllEasterDates };
