@@ -21,25 +21,39 @@ function getEasterDate(year) {
   const quadricentennial = Math.floor(century / 4);
   const M = (15 - p + century - quadricentennial) % 30;
   const daysFromEquinoxToFullMoon = (
-    ((30 - DIFF_BETWEEN_12_MOONS_AND_ONE_YEAR) * yearNumberInMetonicCycle + M) % 30
+    (
+      (30 - DIFF_BETWEEN_12_MOONS_AND_ONE_YEAR)
+      * yearNumberInMetonicCycle + M
+    ) % 30
   );
 
   const b = year % 4;
   const c = year % 7;
   const N = (4 + century - quadricentennial) % 7;
-  const daysFromFullMoonToSunday = (2 * b + 4 * c + 6 * daysFromEquinoxToFullMoon + N) % 7;
+  const daysFromFullMoonToSunday = (
+    2 * b + 4 * c + 6 * daysFromEquinoxToFullMoon + N
+  ) % 7;
 
-  if (daysFromEquinoxToFullMoon === 29 && daysFromFullMoonToSunday === 6) {
+  const exception1 = (
+    daysFromEquinoxToFullMoon === 29
+    && daysFromFullMoonToSunday === 6
+  );
+  const exception2 = (
+    daysFromEquinoxToFullMoon === 28
+    && daysFromFullMoonToSunday === 6
+    && (11 * M + 11) % 30 < 19
+  );
+  if (exception1) {
     month = 4;
     dayOfMonth = 19;
-  } else if (
-    daysFromEquinoxToFullMoon === 28 && daysFromFullMoonToSunday === 6 && (11 * M + 11) % 30 < 19
-  ) {
+  } else if (exception2) {
     month = 4;
     dayOfMonth = 18;
   } else {
     month = 3;
-    dayOfMonth = 22 + daysFromEquinoxToFullMoon + daysFromFullMoonToSunday;
+    dayOfMonth = (
+      22 + daysFromEquinoxToFullMoon + daysFromFullMoonToSunday
+    );
     if (dayOfMonth > 31) {
       month = 4;
       dayOfMonth -= 31;
